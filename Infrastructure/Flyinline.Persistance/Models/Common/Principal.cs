@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Flyinline.Persistance.Models
+namespace Flyinline.Persistance.Models.Common
 {
     public partial class Principal
     {

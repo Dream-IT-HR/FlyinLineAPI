@@ -1,0 +1,1 @@
+﻿Scaffold-DbContext -context CommonContext -Schema Common -Connection "Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True" -Provider Microsoft.EntityFrameworkCore.SqlServer -Outputdir Models\Common -force 
