@@ -13,4 +13,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Flyinline.Application\Flyinline.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Flyinline.Domain\Flyinline.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

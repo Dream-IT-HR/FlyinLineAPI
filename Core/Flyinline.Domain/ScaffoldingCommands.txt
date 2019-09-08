@@ -1,0 +1,10 @@
+﻿Open package manager console, set default project to Flyinline.Doman, run the following commands:
+
+***
+
+Scaffold-DbContext -context CommonDbGeneratedContext -Schema Common -Connection "Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True" -Provider Microsoft.EntityFrameworkCore.SqlServer -Contextdir Contexts -Outputdir Entities\Common -force
+
+***
+
+CutPaste Contexts folder to Infrastructure.Flyinline.Persistance project.
+open each context file and press alt enter on its namespace to change it to new value based on new path;

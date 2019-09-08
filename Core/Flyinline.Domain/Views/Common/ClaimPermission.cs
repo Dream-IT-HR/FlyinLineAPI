@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Flyinline.Domain.Entities.Common;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Flyinline.Persistance.Models.Common
+namespace Flyinline.Domain.Views.Common
 {
-    public partial class PrincipalPermission
+    public class ClaimPermission
     {
         public Guid Id { get; set; }
         public Guid ClaimId { get; set; }

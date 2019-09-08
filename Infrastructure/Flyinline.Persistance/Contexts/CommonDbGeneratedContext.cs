@@ -2,20 +2,18 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Flyinline.Persistance.Models.Common
+namespace Flyinline.Domain.Entities.Common
 {
-    public partial class CommonContext : DbContext
+    public partial class CommonDbGeneratedContext : DbContext
     {
-        public CommonContext()
+        public CommonDbGeneratedContext()
         {
         }
 
-        public CommonContext(DbContextOptions<CommonContext> options)
+        public CommonDbGeneratedContext(DbContextOptions<CommonDbGeneratedContext> options)
             : base(options)
         {
-        
         }
-        
 
         public virtual DbSet<Claim> Claim { get; set; }
         public virtual DbSet<Principal> Principal { get; set; }
@@ -24,14 +22,14 @@ namespace Flyinline.Persistance.Models.Common
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<RolePermission> RolePermission { get; set; }
 
-//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-//        {
-//            if (!optionsBuilder.IsConfigured)
-//            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-//                optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True");
-//            }
-//        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True");
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

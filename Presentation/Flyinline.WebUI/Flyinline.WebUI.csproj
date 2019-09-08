@@ -6,12 +6,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.4.0" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Flyinline.Application\Flyinline.Application.csproj" />
+    <ProjectReference Include="..\..\Core\Flyinline.Domain\Flyinline.Domain.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Flyinline.Infrastructure\Flyinline.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Flyinline.Persistance\Flyinline.Persistance.csproj" />
   </ItemGroup>
 

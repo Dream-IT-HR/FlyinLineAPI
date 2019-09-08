@@ -1,8 +1,14 @@
-﻿using System;
+﻿using Microsoft.OpenApi.Models;
+using MediatR;
+using FluentValidation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Flyinline.Persistance.Models.Common;
+using Flyinline.Application.Interfaces;
+using Flyinline.Infrastructure;
+using Flyinline.Persistance.Contexts;
+using Flyinline.WebUI.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +18,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using FluentValidation.AspNetCore;
+using Flyinline.Application.Principals.Commands.CreatePrincipal;
+using System.Reflection;
+using Flyinline.Application.Infrastructure;
+using Flyinline.Application.Pipeline;
+using Flyinline.WebUI.Security;
 
 namespace Flyinline.WebUI
 {
@@ -27,14 +39,43 @@ namespace Flyinline.WebUI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CommonContext>(options =>
+            Application.AppInitializer.Initialize();
+
+            services.AddDbContext<ICommonDbContext, CommonDbContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
-                    
                 }
             );
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            // Add MediatR
+            services.AddMediatR(typeof(CreatePrincipalCommandHandler).GetTypeInfo().Assembly);
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestAuthorizationBehaviour<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
+
+            services.AddTransient<INotificationService, EmailNotificationService>();
+            services.AddTransient<ICurrentUserAccessor, CurrentUserAccessor>();
+
+            services
+                .AddMvc(options => options.Filters.Add(typeof(CustomExceptionFilterAttribute)))
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatePrincipalCommandValidator>());
+
+            services.AddHttpContextAccessor();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FlyinlineAPI", Version = "v1" });
+            });
+
+            // Customise default API behavour
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +92,18 @@ namespace Flyinline.WebUI
             }
 
             app.UseHttpsRedirection();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlyinlineAPI V1");
+                c.RoutePrefix = string.Empty;
+            });
+
             app.UseMvc();
         }
     }
