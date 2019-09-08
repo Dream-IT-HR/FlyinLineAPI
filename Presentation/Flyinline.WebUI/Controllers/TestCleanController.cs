@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Flyinline.Application.Interfaces;
 using Flyinline.Application.Principals.Commands.CreatePrincipal;
+using Flyinline.Application.Principals.Queries.GetClaimPermissions;
 using Flyinline.Domain.Entities.Common;
-using Flyinline.Persistance.Contexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Flyinline.WebUI.Controllers
 {
@@ -23,12 +18,11 @@ namespace Flyinline.WebUI.Controllers
             
         }
 
-        //// GET api/TestClean
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<PrincipalPermission>>> Get()
-        //{
-
-        //}
+        [HttpGet("principal-permissions")]
+        public async Task<ActionResult<GetClaimPermissionsViewModel>> Get([FromQuery] GetClaimPermissionsRequest query)
+        {
+            return Ok(await Mediator.Send(query));
+        }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

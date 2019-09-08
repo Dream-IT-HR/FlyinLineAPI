@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Flyinline.Domain\Flyinline.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Principals\Queries\" />
-  </ItemGroup>
-
 </Project>
