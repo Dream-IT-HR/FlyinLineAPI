@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flyinline.Application.Principals.Queries.GetClaimPermissions
+namespace Flyinline.Application.Principals.Queries.GetPrincipalRoles
 {
-    public class GetClaimPermissionsRequest: IRequest<GetClaimPermissionsViewModel>, IAuthorizedRequest
+    public class GetPrincipalRolesRequest: IRequest<GetPrincipalRolesViewModel>
     {
         public Guid PrincipalId { get; set; }
     }

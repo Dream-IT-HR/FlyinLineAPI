@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-using MediatR;
+﻿using MediatR;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -24,6 +23,12 @@ using System.Reflection;
 using Flyinline.Application.Infrastructure;
 using Flyinline.Application.Pipeline;
 using Flyinline.WebUI.Security;
+using Flyinline.WebUI.Models;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Flyinline.WebUI.Services;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Flyinline.WebUI
 {
@@ -53,21 +58,60 @@ namespace Flyinline.WebUI
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestAuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
 
-
+            // standard DI
             services.AddTransient<INotificationService, EmailNotificationService>();
             services.AddTransient<ICurrentUserAccessor, CurrentUserAccessor>();
+            services.AddScoped<IAuthenticateService, AuthenticateService>();
 
             services
                 .AddMvc(options => options.Filters.Add(typeof(CustomExceptionFilterAttribute)))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatePrincipalCommandValidator>());
 
+            // make context available whereever
             services.AddHttpContextAccessor();
+
+            services.Configure<TokenManagement>(Configuration.GetSection("tokenManagement"));
+
+            TokenManagement token = Configuration.GetSection("tokenManagement").Get<TokenManagement>();
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(token.Secret)),
+                    ValidIssuer = token.Issuer,
+                    ValidAudience = token.Audience,
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FlyinlineAPI", Version = "v1" });
+                c.SwaggerDoc("v1", new Info { Title = "FlyinlineAPI", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
+                {
+                    Description = "JWT Authorization header {token}",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "Bearer", new string[] { } }
+                });
+                
             });
 
             // Customise default API behavour
@@ -103,6 +147,9 @@ namespace Flyinline.WebUI
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "FlyinlineAPI V1");
                 c.RoutePrefix = string.Empty;
             });
+
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseAuthentication();
 
             app.UseMvc();
         }
