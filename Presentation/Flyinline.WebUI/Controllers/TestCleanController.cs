@@ -21,6 +21,7 @@ namespace Flyinline.WebUI.Controllers
         }
 
         [HttpGet("claim-permissions")]
+        [Authorize]
         public async Task<ActionResult<GetClaimPermissionsViewModel>> Get([FromQuery] GetClaimPermissionsRequest query)
         {
             return Ok(await Mediator.Send(query));

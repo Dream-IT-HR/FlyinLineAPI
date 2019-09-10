@@ -52,6 +52,12 @@ namespace Flyinline.WebUI
                 }
             );
 
+            services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
+            }
+            );
+
             // Add MediatR
             services.AddMediatR(typeof(CreatePrincipalCommandHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));

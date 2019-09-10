@@ -10,6 +10,7 @@ namespace Flyinline.Application.Pipeline
     public class RequestAuthorizationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly ICurrentUserAccessor _currentUserAccessor;
+
         public RequestAuthorizationBehaviour(ICurrentUserAccessor currentUserAccessor)
         {
             _currentUserAccessor = currentUserAccessor;

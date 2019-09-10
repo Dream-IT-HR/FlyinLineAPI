@@ -12,6 +12,7 @@ namespace Flyinline.Persistance.Contexts
     {
         public CommonDbContext(): base()
         {
+
         }
 
         public CommonDbContext(DbContextOptions<CommonDbGeneratedContext> options): base(options)
