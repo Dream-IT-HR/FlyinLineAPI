@@ -54,6 +54,7 @@ namespace Flyinline.Application.Users.Commands.Registration
             });
 
             UserDetail usr = Mapper.Map<RegisterUserCommand, UserDetail>(request);
+            usr.Id = p.Id;
 
             _flyinlineDbContext.UserDetail.Add(usr);
 
