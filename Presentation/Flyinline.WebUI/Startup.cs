@@ -34,9 +34,11 @@ namespace Flyinline.WebUI
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IServiceProvider _serviceProvider;
+        public Startup(IConfiguration configuration, IServiceProvider serviceProvider)
         {
             Configuration = configuration;
+            _serviceProvider = serviceProvider;
         }
 
         public IConfiguration Configuration { get; }
@@ -46,17 +48,21 @@ namespace Flyinline.WebUI
         {
             Application.AppInitializer.Initialize();
 
-            services.AddDbContext<ICommonDbContext, CommonDbContext>(options =>
+            var service = (ICommonDbContext)_serviceProvider.GetService(typeof(ICommonDbContext));
+
+            if (service == null)
+            {
+                services.AddDbContext<ICommonDbContext, CommonDbContext>(options =>
                 {
                     options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
-                }
-            );
+                });
 
-            services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
+                services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
+                });
             }
-            );
+
 
             // Add MediatR
             services.AddMediatR(typeof(CreatePrincipalCommandHandler).GetTypeInfo().Assembly);
@@ -117,7 +123,7 @@ namespace Flyinline.WebUI
                 {
                     { "Bearer", new string[] { } }
                 });
-                
+
             });
 
             // Customise default API behavour

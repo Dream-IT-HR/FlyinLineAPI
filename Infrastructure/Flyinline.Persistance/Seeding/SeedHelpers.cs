@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flyinline.Application.Tests.Helpers
+namespace Flyinline.Persistance.Seeding
 {
     public static class SeedHelpers
     {
@@ -284,7 +284,7 @@ namespace Flyinline.Application.Tests.Helpers
         }
         public static string GetEmailFromFullName(string fullname)
         {
-            return fullname.ToLower().Replace(" ", ".");
+            return fullname.ToLower().Replace(" ", ".") + "@gmail.com";
         }
     }
 }

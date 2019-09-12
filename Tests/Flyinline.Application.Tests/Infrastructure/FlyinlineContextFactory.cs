@@ -1,7 +1,7 @@
 using System;
-using Flyinline.Application.Tests.Helpers;
 using Flyinline.Domain.Entities.Flyinline;
 using Flyinline.Persistance.Contexts;
+using Flyinline.Persistance.Seeding;
 using Microsoft.EntityFrameworkCore;
 
 namespace Northwind.Application.Tests.Infrastructure
@@ -18,18 +18,8 @@ namespace Northwind.Application.Tests.Infrastructure
 
             context.Database.EnsureCreated();
 
-            for (int i = 0; i < 10; i++)
-            {
-                var nRes = i % SeedHelpers.Fullnames.Count;
-                var n = (int)(i / (decimal)SeedHelpers.Fullnames.Count);
+            FlyinlineInitializer.Initialize(context);
 
-                string email = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[nRes] + n.ToString());
-
-                context.UserDetail.Add(
-                    new UserDetail { Id = SeedHelpers.Guids[i], Fullname = SeedHelpers.Fullnames[nRes], Email = email, Username = email }
-                );
-            }
-            
             context.SaveChanges();
 
             return context;

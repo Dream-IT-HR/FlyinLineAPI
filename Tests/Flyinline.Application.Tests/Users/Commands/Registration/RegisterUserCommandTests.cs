@@ -36,3 +36,4 @@ namespace Flyinline.Application.Tests.Users.Commands.Registration
         }
     }
 }
+

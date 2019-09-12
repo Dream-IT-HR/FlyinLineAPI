@@ -4,11 +4,12 @@ using Flyinline.Persistance.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 
-namespace Flyinline.WebUI.FunctionalTests.Common
+namespace Flyinline.WebUI.Tests.Common
 {
     public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
@@ -21,11 +22,18 @@ namespace Flyinline.WebUI.FunctionalTests.Common
                     .AddEntityFrameworkInMemoryDatabase()
                     .BuildServiceProvider();
 
+                var root = new InMemoryDatabaseRoot();
                 // Add a database context using an in-memory 
                 // database for testing.
                 services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
+                    options.UseInMemoryDatabase("InMemoryDbForTesting",root );
+                    options.UseInternalServiceProvider(serviceProvider);
+                });
+
+                services.AddDbContext<ICommonDbContext, CommonDbContext>(options =>
+                {
+                    options.UseInMemoryDatabase("InMemoryDbForTesting", root);
                     options.UseInternalServiceProvider(serviceProvider);
                 });
 
@@ -37,19 +45,21 @@ namespace Flyinline.WebUI.FunctionalTests.Common
                 using (var scope = sp.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
-                    var context = scopedServices.GetRequiredService<ICommonDbContext>();
+                    var commonContext = scopedServices.GetRequiredService<ICommonDbContext>();
+                    var flyinlineContext = scopedServices.GetRequiredService<IFlyinlineDbContext>();
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 
-                    var concreteContext = (CommonDbContext)context;
+                    var concreteCommonContext = (CommonDbContext)commonContext;
+                    var concreteFlyinlineContext = (FlyinlineDbContext)flyinlineContext;
 
                     // Ensure the database is created.
-                    concreteContext.Database.EnsureCreated();
+                    concreteCommonContext.Database.EnsureCreated();
 
                     try
                     {
                         // Seed the database with test data.
-                        // Utilities.InitializeDbForTests(concreteContext);
+                        Utilities.InitializeDbForTests(concreteCommonContext, concreteFlyinlineContext);
                     }
                     catch (Exception ex)
                     {

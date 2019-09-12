@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Flyinline.Application.Principals.Commands.CreatePrincipal;
 using Flyinline.Application.Principals.Queries.GetClaimPermissions;
@@ -20,10 +21,13 @@ namespace Flyinline.WebUI.Controllers
             
         }
 
-        [HttpGet("claim-permissions")]
+        [HttpGet("claim-permissions/{principalId}")]
         [Authorize]
-        public async Task<ActionResult<GetClaimPermissionsViewModel>> Get([FromQuery] GetClaimPermissionsRequest query)
+        public async Task<ActionResult<GetClaimPermissionsViewModel>> Get(Guid principalId)
         {
+            //var query = new GetClaimPermissionsRequest() { PrincipalId = new Guid(principalId) };
+            var query = new GetClaimPermissionsRequest() { PrincipalId = principalId };
+
             return Ok(await Mediator.Send(query));
         }
 

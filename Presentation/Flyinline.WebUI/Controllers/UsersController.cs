@@ -19,7 +19,7 @@ namespace Flyinline.WebUI.Controllers
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesDefaultResponseType]
-        public async Task<IActionResult> Create([FromBody]RegisterUserCommand command)
+        public async Task<IActionResult> Register([FromBody]RegisterUserCommand command)
         {
             await Mediator.Send(command);
 
