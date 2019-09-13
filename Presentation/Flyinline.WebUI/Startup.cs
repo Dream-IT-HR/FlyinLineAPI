@@ -15,10 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using FluentValidation.AspNetCore;
-using Flyinline.Application.Principals.Commands.CreatePrincipal;
 using System.Reflection;
 using Flyinline.Application.Infrastructure;
 using Flyinline.Application.Pipeline;
@@ -29,6 +26,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Flyinline.WebUI.Services;
 using Swashbuckle.AspNetCore.Swagger;
+using Flyinline.Application.Users.Commands.Registration;
 
 namespace Flyinline.WebUI
 {
@@ -48,24 +46,13 @@ namespace Flyinline.WebUI
         {
             Application.AppInitializer.Initialize();
 
-            var service = (ICommonDbContext)_serviceProvider.GetService(typeof(ICommonDbContext));
-
-            if (service == null)
+            services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
             {
-                services.AddDbContext<ICommonDbContext, CommonDbContext>(options =>
-                {
-                    options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
-                });
-
-                services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
-                {
-                    options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
-                });
-            }
-
+                options.UseSqlServer(Configuration.GetConnectionString("flyinline_dev"));
+            });
 
             // Add MediatR
-            services.AddMediatR(typeof(CreatePrincipalCommandHandler).GetTypeInfo().Assembly);
+            services.AddMediatR(typeof(RegisterUserCommandHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestAuthorizationBehaviour<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
@@ -78,7 +65,7 @@ namespace Flyinline.WebUI
             services
                 .AddMvc(options => options.Filters.Add(typeof(CustomExceptionFilterAttribute)))
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreatePrincipalCommandValidator>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<RegisterUserCommandHandler>());
 
             // make context available whereever
             services.AddHttpContextAccessor();

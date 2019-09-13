@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Interfaces\ICommonDbContext.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ExpressMapper.Core" Version="1.9.3" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.4.0" />
     <PackageReference Include="MediatR" Version="7.0.0" />

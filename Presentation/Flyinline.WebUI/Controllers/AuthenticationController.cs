@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Flyinline.Application.Interfaces;
-using Flyinline.Domain.Entities.Common;
 using Flyinline.Persistance.Contexts;
 using Flyinline.WebUI.Models;
 using Flyinline.WebUI.Services;

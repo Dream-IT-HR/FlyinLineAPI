@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Flyinline.WebUI.Tests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Test"
+      }
+    }
+  }
+}

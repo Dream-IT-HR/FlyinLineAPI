@@ -1,5 +1,4 @@
 using System;
-using Flyinline.Domain.Entities.Flyinline;
 using Flyinline.Persistance.Contexts;
 using Flyinline.Persistance.Seeding;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,7 @@ namespace Northwind.Application.Tests.Infrastructure
     {
         public static FlyinlineDbContext Create()
         {
-            var options = new DbContextOptionsBuilder<FlyinlineDbGeneratedContext>()
+            var options = new DbContextOptionsBuilder<FlyinlineDbContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 

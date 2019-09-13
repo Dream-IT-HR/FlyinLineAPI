@@ -6,20 +6,17 @@ namespace Flyinline.Application.Tests.Infrastructure
 {
     public class CommandTestBase : IDisposable
     {
-        protected readonly CommonDbContext _commonDbContext;
-        protected readonly FlyinlineDbContext _flyinlineDbContext;
+        protected readonly FlyinlineDbContext _context;
 
         public CommandTestBase()
         {
-            _commonDbContext = CommonContextFactory.Create();
-            _flyinlineDbContext = FlyinlineContextFactory.Create();
+            _context = FlyinlineContextFactory.Create();
 
         }
 
         public void Dispose()
         {
-            CommonContextFactory.Destroy(_commonDbContext);
-            FlyinlineContextFactory.Destroy(_flyinlineDbContext);
+            FlyinlineContextFactory.Destroy(_context);
         }
     }
 }

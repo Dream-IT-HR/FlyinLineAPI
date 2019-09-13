@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Flyinline.Application.Interfaces;
-using Flyinline.Domain.Entities.Common;
+using Flyinline.Domain.Entities;
 using Flyinline.Persistance.Contexts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +15,10 @@ namespace Flyinline.WebUI.Controllers
     [ApiController]
     public class DbTestController : ControllerBase
     {
-        private readonly ICommonDbContext _context;
+        private readonly IFlyinlineDbContext _context;
         //private readonly ILogger _logger;
 
-        public DbTestController(ICommonDbContext context)
+        public DbTestController(IFlyinlineDbContext context)
         {
             _context = context;
         }

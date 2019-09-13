@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Flyinline.Domain.Entities.Common
+namespace Flyinline.Domain.Entities
 {
     public partial class RolePermission
     {

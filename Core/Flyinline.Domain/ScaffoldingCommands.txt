@@ -1,10 +1,21 @@
-﻿Open package manager console, set default project to Flyinline.Doman, run the following commands:
+﻿Open package manager console, set default project to Flyinline.Domain, run the following commands:
 
 ***
 
-Scaffold-DbContext -context CommonDbGeneratedContext -Schema Common -Connection "Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True" -Provider Microsoft.EntityFrameworkCore.SqlServer -Contextdir Contexts -Outputdir Entities\Common -force
+Scaffold-DbContext -context CommonDbGeneratedContext -Connection "Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True" -Provider Microsoft.EntityFrameworkCore.SqlServer -Contextdir Contexts -Outputdir Entities -force
+
 
 ***
 
 CutPaste Contexts folder to Infrastructure.Flyinline.Persistance project.
-open each context file and press alt enter on its namespace to change it to new value based on new path;
+
+***
+
+Open context file and press alt enter on its namespace to change it to new value based on new path;
+
+***
+
+Add this line to genereated model OnModelCreating method: 
+AdditionalModelCreating(modelBuilder);
+
+**

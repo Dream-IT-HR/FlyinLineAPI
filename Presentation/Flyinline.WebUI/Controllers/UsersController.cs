@@ -26,5 +26,14 @@ namespace Flyinline.WebUI.Controllers
             return NoContent();
         }
 
+        //[HttpGet("claim-permissions/{principalId}")]
+        //[Authorize]
+        //public async Task<ActionResult<GetClaimPermissionsViewModel>> Get(Guid principalId)
+        //{
+        //    //var query = new GetClaimPermissionsRequest() { PrincipalId = new Guid(principalId) };
+        //    var query = new GetClaimPermissionsRequest() { PrincipalId = principalId };
+
+        //    return Ok(await Mediator.Send(query));
+        //}
     }
 }

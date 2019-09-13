@@ -1,8 +1,6 @@
-﻿using Flyinline.Domain.Entities.Flyinline;
-using ExpressMapper;
+﻿using ExpressMapper;
 using Flyinline.Application.Interfaces;
 using Flyinline.Application.Notifications.Models;
-using Flyinline.Domain.Entities.Common;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -10,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Flyinline.Domain.Entities;
 
 namespace Flyinline.Application.Users.Commands.Registration
 {
@@ -24,14 +23,12 @@ namespace Flyinline.Application.Users.Commands.Registration
 
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Unit>
     {
-        private readonly ICommonDbContext _commonDbContext;
-        private readonly IFlyinlineDbContext _flyinlineDbContext;
+        private readonly IFlyinlineDbContext _context;
         private readonly IMediator _mediator;
 
-        public RegisterUserCommandHandler(ICommonDbContext commonDbContext, IFlyinlineDbContext flyinlineDbContext, IMediator mediator)
+        public RegisterUserCommandHandler(IFlyinlineDbContext context, IMediator mediator)
         {
-            _commonDbContext = commonDbContext;
-            _flyinlineDbContext = flyinlineDbContext;
+            _context = context;
             _mediator = mediator;
         }
 
@@ -40,13 +37,13 @@ namespace Flyinline.Application.Users.Commands.Registration
             Principal p = Mapper.Map<RegisterUserCommand, Principal>(request);
             p.Id = Guid.NewGuid();
 
-            _commonDbContext.Principal.Add(p);
+            _context.Principal.Add(p);
 
             string roleName = (request.IsBusinessOwner ? "BusinessOwner" : "Client");
 
-            Guid roleId = _commonDbContext.Role.Where(r => r.Name == roleName).Select(r => r.Id).FirstOrDefault();
+            Guid roleId = _context.Role.Where(r => r.Name == roleName).Select(r => r.Id).FirstOrDefault();
 
-            _commonDbContext.PrincipalHasRole.Add(new PrincipalHasRole()
+            _context.PrincipalHasRole.Add(new PrincipalHasRole()
             {
                 Id = Guid.NewGuid(),
                 PrincipalId = p.Id,
@@ -56,10 +53,9 @@ namespace Flyinline.Application.Users.Commands.Registration
             UserDetail usr = Mapper.Map<RegisterUserCommand, UserDetail>(request);
             usr.Id = p.Id;
 
-            _flyinlineDbContext.UserDetail.Add(usr);
+            _context.UserDetail.Add(usr);
 
-            await _commonDbContext.SaveChangesAsync(cancellationToken);
-            await _flyinlineDbContext.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             await _mediator.Publish(new UserRegistered { Data = request }, cancellationToken);
 

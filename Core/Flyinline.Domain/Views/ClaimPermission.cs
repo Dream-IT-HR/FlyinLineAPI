@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Flyinline.Domain.Entities;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Flyinline.Domain.Entities.Common
+namespace Flyinline.Domain.Views
 {
-    public partial class PrincipalPermission
+    public class ClaimPermission
     {
         public Guid Id { get; set; }
         public Guid ClaimId { get; set; }

@@ -1,5 +1,5 @@
 ﻿using Flyinline.Application.Interfaces;
-using Flyinline.Domain.Entities.Common;
+using Flyinline.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -13,9 +13,9 @@ namespace Flyinline.Application.Principals.Queries.GetPrincipalRoles
 {
     public class GetPrincipalRolesHandler : IRequestHandler<GetPrincipalRolesRequest, GetPrincipalRolesViewModel>
     {
-        private readonly ICommonDbContext _context;
+        private readonly IFlyinlineDbContext _context;
 
-        public GetPrincipalRolesHandler(ICommonDbContext context)
+        public GetPrincipalRolesHandler(IFlyinlineDbContext context)
         {
             _context = context;
         }

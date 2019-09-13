@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Flyinline.Domain.Entities.Common
+namespace Flyinline.Domain.Entities
 {
     public partial class Principal
     {
@@ -15,6 +15,7 @@ namespace Flyinline.Domain.Entities.Common
         public bool SuperAdmin { get; set; }
         public string Username { get; set; }
 
+        public virtual UserDetail UserDetail { get; set; }
         public virtual ICollection<PrincipalHasRole> PrincipalHasRole { get; set; }
         public virtual ICollection<PrincipalPermission> PrincipalPermission { get; set; }
     }

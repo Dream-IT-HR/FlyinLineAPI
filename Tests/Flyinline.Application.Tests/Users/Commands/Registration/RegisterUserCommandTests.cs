@@ -17,7 +17,7 @@ namespace Flyinline.Application.Tests.Users.Commands.Registration
         {
             // Arrange
             var mediatorMock = new Mock<IMediator>();
-            var sut = new RegisterUserCommandHandler(_commonDbContext, _flyinlineDbContext, mediatorMock.Object);
+            var sut = new RegisterUserCommandHandler(_context, mediatorMock.Object);
 
             var cmd = new RegisterUserCommand()
             {

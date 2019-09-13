@@ -26,9 +26,8 @@ namespace Flyinline.WebUI.Tests.Common
             return result;
         }
 
-        public static void InitializeDbForTests(CommonDbContext commonContext, FlyinlineDbContext flyinlineContext)
+        public static void InitializeDbForTests(FlyinlineDbContext flyinlineContext)
         {
-            CommonInitializer.Initialize(commonContext);
             FlyinlineInitializer.Initialize(flyinlineContext);
         }
 

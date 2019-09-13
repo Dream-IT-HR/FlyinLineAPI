@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Configuration;
+using System.IO;
 using Flyinline.Application.Interfaces;
 using Flyinline.Persistance.Contexts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -23,43 +26,47 @@ namespace Flyinline.WebUI.Tests.Common
                     .BuildServiceProvider();
 
                 var root = new InMemoryDatabaseRoot();
-                // Add a database context using an in-memory 
-                // database for testing.
+
+                //services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
+                //{
+                //    options.UseInMemoryDatabase("InMemoryDbForTesting", root);
+                //    options.UseInternalServiceProvider(serviceProvider);
+                //});
+
+                //add settings file to config providers:
+                var _configuration = FunctionsHostBuilderExtensions.GetConfigurationWithAppSettings(services);
+                // builder.Services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), _configuration));
+                // _credentialSettings = _configuration.GetSection("Values:Credentials").Get<CredentialSettings>();
+
+
+
                 services.AddDbContext<IFlyinlineDbContext, FlyinlineDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting",root );
-                    options.UseInternalServiceProvider(serviceProvider);
+                    options.UseSqlServer(_configuration.GetConnectionString("flyinline_db"));
                 });
 
-                services.AddDbContext<ICommonDbContext, CommonDbContext>(options =>
-                {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting", root);
-                    options.UseInternalServiceProvider(serviceProvider);
-                });
 
                 // Build the service provider.
                 var sp = services.BuildServiceProvider();
-
                 // Create a scope to obtain a reference to the database
                 // context (NorthwindDbContext)
                 using (var scope = sp.CreateScope())
                 {
                     var scopedServices = scope.ServiceProvider;
-                    var commonContext = scopedServices.GetRequiredService<ICommonDbContext>();
-                    var flyinlineContext = scopedServices.GetRequiredService<IFlyinlineDbContext>();
+                    var context = scopedServices.GetRequiredService<IFlyinlineDbContext>();
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
+                    
 
-                    var concreteCommonContext = (CommonDbContext)commonContext;
-                    var concreteFlyinlineContext = (FlyinlineDbContext)flyinlineContext;
+                    var concreteContext= (FlyinlineDbContext)context;
 
                     // Ensure the database is created.
-                    concreteCommonContext.Database.EnsureCreated();
+                    concreteContext.Database.EnsureCreated();
 
                     try
                     {
                         // Seed the database with test data.
-                        Utilities.InitializeDbForTests(concreteCommonContext, concreteFlyinlineContext);
+                        Utilities.InitializeDbForTests(concreteContext);
                     }
                     catch (Exception ex)
                     {

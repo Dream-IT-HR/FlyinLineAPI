@@ -1,5 +1,5 @@
 ﻿using Flyinline.Application.Shared;
-using Flyinline.Domain.Entities.Common;
+using Flyinline.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
