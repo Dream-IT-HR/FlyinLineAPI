@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Flyinline.Application.Principals.Queries.GetPrincipalRoles;
 using Flyinline.WebUI.Models;
+using Google.Apis.Auth;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -62,13 +63,13 @@ namespace Flyinline.WebUI.Services
             return true;
         }
 
-        
+
+        // if (!_userManagementService.IsValidUser(request.Username, request.Password)) return false;
+
         public async Task<string> GenerateTokenAsync(TokenRequest request)
         {
             string token = string.Empty;
-            
-            // if (!_userManagementService.IsValidUser(request.Username, request.Password)) return false;
-
+        
             var roles = await GetUserRolesAsync(request.Username);
 
             var claims = new List<Claim>
@@ -78,8 +79,6 @@ namespace Flyinline.WebUI.Services
 
             claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x)));
             
-
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenManagement.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -95,6 +94,23 @@ namespace Flyinline.WebUI.Services
 
             return token;
 
+        }
+
+        public async Task<string> AuthenticateGoogle(GoogleJsonWebSignature.Payload payload)
+        {
+            string token = null;
+            if (payload.EmailVerified)
+            {
+                string username = payload.Email;
+                var tr = new TokenRequest()
+                {
+                    Username = username
+                };
+
+                token = await GenerateTokenAsync(tr);
+            }
+
+            return token;
         }
     }
 }

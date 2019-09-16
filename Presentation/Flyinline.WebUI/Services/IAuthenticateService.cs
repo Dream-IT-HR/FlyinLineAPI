@@ -10,5 +10,8 @@ namespace Flyinline.WebUI.Services
     {
         bool IsAuthenticated(TokenRequest request, out string token);
         Task<string> GenerateTokenAsync(TokenRequest request);
+        Task<string> AuthenticateGoogle(Google.Apis.Auth.GoogleJsonWebSignature.Payload payload);
+
+
     }
 }
