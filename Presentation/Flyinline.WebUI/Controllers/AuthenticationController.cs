@@ -51,13 +51,17 @@ namespace Flyinline.WebUI.Controllers
         {
             GoogleJsonWebSignature.Payload payload = GoogleJsonWebSignature.ValidateAsync(req.TokenId, new GoogleJsonWebSignature.ValidationSettings()).Result;
 
-            await _authenticateService.GenerateTokenAsync(
+            string token = await _authenticateService.GenerateTokenAsync(
                 new TokenRequest()
                 {
                     Username = payload.Email
                 });
 
-            return null;
+            return Ok(
+                new
+                {
+                    token
+                });
         }
     }
 }

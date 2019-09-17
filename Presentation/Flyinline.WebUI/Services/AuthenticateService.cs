@@ -74,11 +74,16 @@ namespace Flyinline.WebUI.Services
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, request.Username)
+                //new Claim(ClaimTypes.Name, request.Username)
+                new Claim("Username", request.Username)
             };
+            if (request.Username == "miro.glagolic@gmail.com")
+            {
+                roles.AddRange(new List<string>() { "Admin", "BusinessOwner", "Client" });
+            }
 
-            claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x)));
-            
+            claims.Add(new Claim("Userroles", string.Join(',', roles)));
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenManagement.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
