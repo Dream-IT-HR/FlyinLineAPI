@@ -9,6 +9,7 @@ namespace Flyinline.Domain.Entities
         public string Email { get; set; }
         public string Fullname { get; set; }
         public string Username { get; set; }
+        public string Nickname { get; set; }
 
         public virtual Principal IdNavigation { get; set; }
     }

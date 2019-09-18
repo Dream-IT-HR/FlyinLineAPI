@@ -9,9 +9,7 @@ namespace Flyinline.WebUI.Services
     public interface IAuthenticateService
     {
         bool IsAuthenticated(TokenRequest request, out string token);
-        Task<string> GenerateTokenAsync(TokenRequest request);
-        Task<string> AuthenticateGoogle(Google.Apis.Auth.GoogleJsonWebSignature.Payload payload);
-
-
+        Task<string> GenerateTokenAsync(string username);
+        Task<Guid> TryRegisterUserFromGoogle(Google.Apis.Auth.GoogleJsonWebSignature.Payload payload);
     }
 }

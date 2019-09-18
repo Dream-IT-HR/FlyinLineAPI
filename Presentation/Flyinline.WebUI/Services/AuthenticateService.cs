@@ -5,7 +5,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ExpressMapper;
 using Flyinline.Application.Principals.Queries.GetPrincipalRoles;
+using Flyinline.Application.Users.Commands.Registration;
+using Flyinline.Application.Users.Queries.GetUserDetailByUsername;
 using Flyinline.WebUI.Models;
 using Google.Apis.Auth;
 using MediatR;
@@ -26,10 +29,20 @@ namespace Flyinline.WebUI.Services
             _tokenManagement = tokenManagement.Value;
             Mediator = mediator;
         }
-        private async Task<List<string>> GetUserRolesAsync(string username)
+
+        private async Task<Domain.Entities.UserDetail> GetUserDetailByUsernameAsync(string username)
         {
-            // TODO - get principalid by username - dodati filter express u novi query get principal
-            var query = new GetPrincipalRolesRequest() { PrincipalId = new Guid("3FA85F64-5717-4562-B3FC-2C963F66AFA5")  };
+            var query = new GetUserDetailByUsernameRequest() { Username = username};
+
+            GetUserDetailByUsernameViewModel t = await Mediator.Send(query);
+
+            return t.Data?.FirstOrDefault();
+        }
+
+        private async Task<List<string>> GetPrincipalRolesByPrincipalIdAsync(Guid principalId)
+        {
+            var query = new GetPrincipalRolesRequest() { PrincipalId = principalId };
+
             GetPrincipalRolesViewModel t = await Mediator.Send(query);
 
             return t.Data?.Select(x => x.Role.Name).ToList();
@@ -66,22 +79,21 @@ namespace Flyinline.WebUI.Services
 
         // if (!_userManagementService.IsValidUser(request.Username, request.Password)) return false;
 
-        public async Task<string> GenerateTokenAsync(TokenRequest request)
+        public async Task<string> GenerateTokenAsync(string username)
         {
             string token = string.Empty;
-        
-            var roles = await GetUserRolesAsync(request.Username);
+
+            Domain.Entities.UserDetail userDetail = await GetUserDetailByUsernameAsync(username);
+
+            var roles = await GetPrincipalRolesByPrincipalIdAsync(userDetail.Id);
 
             var claims = new List<Claim>
             {
-                //new Claim(ClaimTypes.Name, request.Username)
-                new Claim("Username", request.Username)
+                new Claim("Username", username),
+                new Claim("Nickname", userDetail.Nickname),
+                new Claim("Email", userDetail.Email)
             };
-            if (request.Username == "miro.glagolic@gmail.com")
-            {
-                roles.AddRange(new List<string>() { "Admin", "BusinessOwner", "Client" });
-            }
-
+            
             claims.Add(new Claim("Userroles", string.Join(',', roles)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenManagement.Secret));
@@ -101,21 +113,29 @@ namespace Flyinline.WebUI.Services
 
         }
 
-        public async Task<string> AuthenticateGoogle(GoogleJsonWebSignature.Payload payload)
+        public async Task<Guid> TryRegisterUserFromGoogle(GoogleJsonWebSignature.Payload payload)
         {
-            string token = null;
+            Guid userId = Guid.Empty;
+
             if (payload.EmailVerified)
             {
-                string username = payload.Email;
-                var tr = new TokenRequest()
-                {
-                    Username = username
-                };
+                var user = await GetUserDetailByUsernameAsync(payload.Email);
 
-                token = await GenerateTokenAsync(tr);
+                if (user == null)
+                {
+                    RegisterUserCommand registerUserCommand = Mapper.Map<GoogleJsonWebSignature.Payload, RegisterUserCommand>(payload);
+
+                    RegisterUserViewModel ruvm = await Mediator.Send(registerUserCommand);
+
+                    userId = ruvm.Id;
+                }
+                else
+                {
+                    userId = user.Id;
+                }
             }
 
-            return token;
+            return userId;
         }
     }
 }

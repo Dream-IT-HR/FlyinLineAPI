@@ -46,7 +46,7 @@ namespace Flyinline.Persistance.Contexts
             modelBuilder.Entity<AlwaysExecutingTask>(entity =>
             {
                 entity.HasKey(e => e.Id)
-                    .HasName("PK__AlwaysEx__3214EC26C1E77C51")
+                    .HasName("PK__AlwaysEx__3214EC2681263225")
                     .ForSqlServerIsClustered(false);
 
                 entity.ToTable("AlwaysExecutingTask", "DBTimeLine");
@@ -224,7 +224,7 @@ namespace Flyinline.Persistance.Contexts
             modelBuilder.Entity<Revision>(entity =>
             {
                 entity.HasKey(e => e.Id)
-                    .HasName("PK__Revision__3214EC263203A205")
+                    .HasName("PK__Revision__3214EC26970FFA76")
                     .ForSqlServerIsClustered(false);
 
                 entity.ToTable("Revision", "DBTimeLine");
@@ -336,6 +336,10 @@ namespace Flyinline.Persistance.Contexts
                     .HasMaxLength(512);
 
                 entity.Property(e => e.Fullname)
+                    .IsRequired()
+                    .HasMaxLength(512);
+
+                entity.Property(e => e.Nickname)
                     .IsRequired()
                     .HasMaxLength(512);
 

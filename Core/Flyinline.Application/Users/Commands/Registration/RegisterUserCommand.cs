@@ -9,10 +9,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using Flyinline.Domain.Entities;
+using Flyinline.Application.Shared;
 
 namespace Flyinline.Application.Users.Commands.Registration
 {
-    public class RegisterUserCommand : IRequest
+    public class RegisterUserCommand : IRequest<RegisterUserViewModel>
     {
         public string Username { get; set; }
         public string Email { get; set; }
@@ -21,7 +22,7 @@ namespace Flyinline.Application.Users.Commands.Registration
         public bool IsBusinessOwner { get; set; }
     }
 
-    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, Unit>
+    public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, RegisterUserViewModel>
     {
         private readonly IFlyinlineDbContext _context;
         private readonly IMediator _mediator;
@@ -32,7 +33,7 @@ namespace Flyinline.Application.Users.Commands.Registration
             _mediator = mediator;
         }
 
-        public async Task<Unit> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+        public async Task<RegisterUserViewModel> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {
             Principal p = Mapper.Map<RegisterUserCommand, Principal>(request);
             p.Id = Guid.NewGuid();
@@ -59,7 +60,10 @@ namespace Flyinline.Application.Users.Commands.Registration
 
             await _mediator.Publish(new UserRegistered { Data = request }, cancellationToken);
 
-            return Unit.Value;
+            return new RegisterUserViewModel
+            {
+                Id = p.Id
+            };
         }
     }
 

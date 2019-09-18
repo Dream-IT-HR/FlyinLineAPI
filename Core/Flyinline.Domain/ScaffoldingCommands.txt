@@ -2,7 +2,7 @@
 
 ***
 
-Scaffold-DbContext -context CommonDbGeneratedContext -Connection "Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True" -Provider Microsoft.EntityFrameworkCore.SqlServer -Contextdir Contexts -Outputdir Entities -force
+Scaffold-DbContext -context FlyinlineDbContext -Connection "Data Source=localhost;Initial Catalog=flyinline_dev;Integrated Security=True" -Provider Microsoft.EntityFrameworkCore.SqlServer -Contextdir Contexts -Outputdir Entities -force
 
 
 ***

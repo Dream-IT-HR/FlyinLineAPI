@@ -34,7 +34,7 @@ namespace Flyinline.WebUI.Controllers
                 return BadRequest(ModelState);
             }
 
-            string token = await _authenticateService.GenerateTokenAsync(request);
+            string token = await _authenticateService.GenerateTokenAsync(request.Username);
 
             //if (_authenticateService.IsAuthenticated(request, out token))
             if (!string.IsNullOrEmpty(token))
@@ -49,13 +49,16 @@ namespace Flyinline.WebUI.Controllers
         [HttpPost("google")]
         public async Task<IActionResult> Google([FromBody]GoogleAuthenticateRequest req)
         {
-            GoogleJsonWebSignature.Payload payload = GoogleJsonWebSignature.ValidateAsync(req.TokenId, new GoogleJsonWebSignature.ValidationSettings()).Result;
+            GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(req.TokenId, new GoogleJsonWebSignature.ValidationSettings());
 
-            string token = await _authenticateService.GenerateTokenAsync(
-                new TokenRequest()
-                {
-                    Username = payload.Email
-                });
+            string token = null;
+
+            Guid userId = await _authenticateService.TryRegisterUserFromGoogle(payload);
+
+            if (userId != Guid.Empty)
+            {
+                token = await _authenticateService.GenerateTokenAsync(payload.Email);
+            }
 
             return Ok(
                 new
