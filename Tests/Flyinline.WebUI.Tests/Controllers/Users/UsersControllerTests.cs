@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Flyinline.Persistance.Seeding;
 using Flyinline.WebUI.Models;
+using Flyinline.Application.Users.Queries.GetUserDetailByUsername;
 
 namespace Flyinline.WebUI.Tests.Controllers.Users
 {
@@ -36,28 +37,45 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
             response.EnsureSuccessStatusCode();
         }
 
-        //[Fact]
-        //public async Task ReturnsIEnumerableOfCategoryPreviewDto()
-        //{
-        //    var command = new TokenRequest
-        //    {
-        //        Username = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0]),
-        //        Password = "1234"
-        //    };
+        [Fact]
+        public async Task GivenGetUserDetailByUsernameCommandRetursGetUserDetailByUsernameViewModel()
+        {
+            var registerCommand = new RegisterUserCommand
+            {
+                Email = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0]),
+                FullName = SeedHelpers.Fullnames[0],
+                IsBusinessOwner = false,
+                Nickname = SeedHelpers.Fullnames[0].Split(' ')[0],
+                Username = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0])
+            };
 
-        //    var content = Utilities.GetRequestContent(command);
+            var registerContent = Utilities.GetRequestContent(registerCommand);
 
-        //    var tokenResponse = await _client.PostAsync($"/api/authentication/request", content);
-        //    var token = await tokenResponse.Content.ReadAsStringAsync();
+            var registerResponse = await _client.PostAsync($"/api/users/register", registerContent);
 
-        //    _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            registerResponse.EnsureSuccessStatusCode();
 
-        //    var response = await _client.GetAsync($"/api/testclean/claim-permissions/{SeedHelpers.Guids[0].ToString()}");
 
-        //    response.EnsureSuccessStatusCode();
+            var command = new TokenRequest
+            {
+                Username = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0]),
+                Password = "1234"
+            };
 
-        //    GetClaimPermissionsViewModel res = await Utilities.GetResponseContent<GetClaimPermissionsViewModel>(response);
+            var content = Utilities.GetRequestContent(command);
 
-        //    Assert.NotEmpty(res.Data);
+            var tokenResponse = await _client.PostAsync($"/api/authentication/request", content);
+            var token = await tokenResponse.Content.ReadAsStringAsync();
+
+            _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.GetAsync($"/api/users/{SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0])}");
+
+            response.EnsureSuccessStatusCode();
+
+            var res = await Utilities.GetResponseContent<GetUserDetailByUsernameViewModel>(response);
+
+            Assert.NotEmpty(res.Data);
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Flyinline.Application.Users.Commands.Registration;
+using Flyinline.Application.Users.Queries.GetUserDetailByUsername;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,14 +28,13 @@ namespace Flyinline.WebUI.Controllers
             return NoContent();
         }
 
-        //[HttpGet("claim-permissions/{principalId}")]
-        //[Authorize]
-        //public async Task<ActionResult<GetClaimPermissionsViewModel>> Get(Guid principalId)
-        //{
-        //    //var query = new GetClaimPermissionsRequest() { PrincipalId = new Guid(principalId) };
-        //    var query = new GetClaimPermissionsRequest() { PrincipalId = principalId };
+        [HttpGet("{username}")]
+        [Authorize]
+        public async Task<ActionResult<GetUserDetailByUsernameViewModel>> Get(string username)
+        {
+            var query = new GetUserDetailByUsernameRequest() { Username = username };
 
-        //    return Ok(await Mediator.Send(query));
-        //}
+            return Ok(await Mediator.Send(query));
+        }
     }
 }
