@@ -19,8 +19,11 @@ namespace Flyinline.WebUI.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticateService _authenticateService;
-        public AuthenticationController(IAuthenticateService authenticateService)
+        private readonly ICurrentUserAccessor _currentUserAccessor = null;
+
+        public AuthenticationController(IAuthenticateService authenticateService, ICurrentUserAccessor currentUserAccessor)
         {
+            _currentUserAccessor = currentUserAccessor;
             _authenticateService = authenticateService;
         }
 
@@ -28,18 +31,45 @@ namespace Flyinline.WebUI.Controllers
         [HttpPost, Route("request")]
         public async Task<IActionResult> RequestToken([FromBody] TokenRequest request)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
             string token = await _authenticateService.GenerateTokenAsync(request.Username);
+            string refreshToken = _authenticateService.GenerateRefreshToken(request.Username);
 
-            //if (_authenticateService.IsAuthenticated(request, out token))
             if (!string.IsNullOrEmpty(token))
             {
-                return Ok(token);
+                return Ok(
+                    new
+                    {
+                        token,
+                        refreshToken
+                    });
+            }
+
+            return BadRequest("Invalid Request");
+        }
+
+        // send refresh token in the header
+        [Authorize]
+        [HttpPost, Route("refresh")]
+        public async Task<IActionResult> RefreshToken()
+        {
+            string username = _currentUserAccessor.GetUsername();
+
+            string token = await _authenticateService.GenerateTokenAsync(username);
+            string refreshToken = _authenticateService.GenerateRefreshToken(username);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                return Ok(
+                    new
+                    {
+                        token,
+                        refreshToken
+                    });
             }
 
             return BadRequest("Invalid Request");
@@ -52,18 +82,21 @@ namespace Flyinline.WebUI.Controllers
             GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(req.TokenId, new GoogleJsonWebSignature.ValidationSettings());
 
             string token = null;
+            string refreshToken = null;
 
             Guid userId = await _authenticateService.TryRegisterUserFromGoogle(payload);
 
             if (userId != Guid.Empty)
             {
                 token = await _authenticateService.GenerateTokenAsync(payload.Email);
+                refreshToken = _authenticateService.GenerateRefreshToken(payload.Email);
             }
 
             return Ok(
                 new
                 {
-                    token
+                    token,
+                    refreshToken
                 });
         }
     }

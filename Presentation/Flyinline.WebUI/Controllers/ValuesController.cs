@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Flyinline.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flyinline.WebUI.Controllers
@@ -10,10 +12,19 @@ namespace Flyinline.WebUI.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly ICurrentUserAccessor _currentUserAccessor = null;
+
+        public ValuesController(ICurrentUserAccessor currentUserAccessor)
+        {
+            _currentUserAccessor = currentUserAccessor;
+        }
+
         // GET api/values
         [HttpGet]
+        [Authorize]
         public ActionResult<IEnumerable<string>> Get()
         {
+            var username = _currentUserAccessor.GetUsername();
             return new string[] { "value1", "value2" };
         }
 

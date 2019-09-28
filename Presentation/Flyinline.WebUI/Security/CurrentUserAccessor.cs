@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Flyinline.WebUI.Security
@@ -18,7 +19,9 @@ namespace Flyinline.WebUI.Security
 
         public string GetUsername()
         {
-            var username = _httpContextAccessor?.HttpContext?.User?.Identity?.Name;
+            List<Claim> claims = ((ClaimsIdentity)(_httpContextAccessor?.HttpContext?.User?.Identity)).Claims?.ToList();
+
+            var username = claims?.FirstOrDefault(c => c.Type == "Username")?.Value;
 
             return username;
         }

@@ -90,7 +90,10 @@ namespace Flyinline.WebUI
                     ValidIssuer = token.Issuer,
                     ValidAudience = token.Audience,
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    RequireExpirationTime = true,
+                    ClockSkew = new TimeSpan(0)
                 };
             });
 

@@ -34,7 +34,9 @@ namespace Flyinline.WebUI.Controllers
         {
             var query = new GetUserDetailByUsernameRequest() { Username = username };
 
-            return Ok(await Mediator.Send(query));
+            GetUserDetailByUsernameViewModel res = await Mediator.Send(query);
+
+            return Ok(res);
         }
     }
 }

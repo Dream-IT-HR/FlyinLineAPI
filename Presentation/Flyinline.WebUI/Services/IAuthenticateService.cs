@@ -10,6 +10,7 @@ namespace Flyinline.WebUI.Services
     {
         bool IsAuthenticated(TokenRequest request, out string token);
         Task<string> GenerateTokenAsync(string username);
+        string GenerateRefreshToken(string username);
         Task<Guid> TryRegisterUserFromGoogle(Google.Apis.Auth.GoogleJsonWebSignature.Payload payload);
     }
 }

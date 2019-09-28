@@ -22,7 +22,7 @@ namespace Flyinline.WebUI.Services
     {
         private readonly TokenManagement _tokenManagement;
         private IMediator Mediator;
-        
+
 
         public AuthenticateService(IOptions<TokenManagement> tokenManagement, IMediator mediator)
         {
@@ -32,7 +32,7 @@ namespace Flyinline.WebUI.Services
 
         private async Task<Domain.Entities.UserDetail> GetUserDetailByUsernameAsync(string username)
         {
-            var query = new GetUserDetailByUsernameRequest() { Username = username};
+            var query = new GetUserDetailByUsernameRequest() { Username = username };
 
             GetUserDetailByUsernameViewModel t = await Mediator.Send(query);
 
@@ -51,7 +51,7 @@ namespace Flyinline.WebUI.Services
         public bool IsAuthenticated(TokenRequest request, out string token)
         {
             token = string.Empty;
-            
+
             // if (!_userManagementService.IsValidUser(request.Username, request.Password)) return false;
 
             var claim = new[]
@@ -59,7 +59,7 @@ namespace Flyinline.WebUI.Services
                 new Claim(ClaimTypes.Name, request.Username)
             };
 
-            
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenManagement.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -77,7 +77,31 @@ namespace Flyinline.WebUI.Services
         }
 
 
-        // if (!_userManagementService.IsValidUser(request.Username, request.Password)) return false;
+        public string GenerateRefreshToken(string username)
+        {
+            string token = string.Empty;
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenManagement.Secret));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>
+            {
+                new Claim("Username", username),
+                new Claim("Created", DateTime.UtcNow.ToString())
+            };
+
+            var jwtToken = new JwtSecurityToken(
+                _tokenManagement.Issuer,
+                _tokenManagement.Audience,
+                claims,
+                expires: DateTime.Now.AddDays(_tokenManagement.RefreshExpirationDays),
+                signingCredentials: credentials
+            );
+
+            token = new JwtSecurityTokenHandler().WriteToken(jwtToken);
+
+            return token;
+        }
 
         public async Task<string> GenerateTokenAsync(string username)
         {
@@ -91,9 +115,10 @@ namespace Flyinline.WebUI.Services
             {
                 new Claim("Username", username),
                 new Claim("Nickname", userDetail.Nickname),
-                new Claim("Email", userDetail.Email)
+                new Claim("Email", userDetail.Email),
+                new Claim("Created", DateTime.UtcNow.ToString())
             };
-            
+
             claims.Add(new Claim("Userroles", string.Join(',', roles)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenManagement.Secret));

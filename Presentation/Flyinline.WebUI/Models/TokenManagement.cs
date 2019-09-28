@@ -21,8 +21,8 @@ namespace Flyinline.WebUI.Models
         [JsonProperty("accessExpiration")]
         public int AccessExpiration { get; set; }
 
-        [JsonProperty("refreshExpiration")]
-        public int RefreshExpiration { get; set; }
+        [JsonProperty("refreshExpirationDays")]
+        public int RefreshExpirationDays { get; set; }
 
     }
 }
