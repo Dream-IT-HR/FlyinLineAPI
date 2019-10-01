@@ -6,6 +6,7 @@ using Xunit;
 using Flyinline.Persistance.Seeding;
 using Flyinline.WebUI.Models;
 using Flyinline.Application.Users.Queries.GetUserDetailByUsername;
+using System;
 
 namespace Flyinline.WebUI.Tests.Controllers.Users
 {
@@ -21,13 +22,15 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
         [Fact]
         public async Task GivenRegisterUserCommand_ReturnsSuccessStatusCode()
         {
+            string userName = $"{SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[2])}_{Guid.NewGuid().ToString()}";
+
             var command = new RegisterUserCommand
             {
-                Email = "test.testic@test.hr",
-                FullName = "Test Testic",
+                Email = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[2]),
+                FullName = SeedHelpers.Fullnames[2],
                 IsBusinessOwner = false,
                 Nickname = "Te",
-                Username = "test.testic@test.hr"
+                Username = userName
             };
 
             var content = Utilities.GetRequestContent(command);
@@ -40,13 +43,15 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
         [Fact]
         public async Task GivenGetUserDetailByUsernameCommandRetursGetUserDetailByUsernameViewModel()
         {
+            string userName = $"{SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0])}_{Guid.NewGuid().ToString()}";
+
             var registerCommand = new RegisterUserCommand
             {
                 Email = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0]),
                 FullName = SeedHelpers.Fullnames[0],
                 IsBusinessOwner = false,
                 Nickname = SeedHelpers.Fullnames[0].Split(' ')[0],
-                Username = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0])
+                Username = userName
             };
 
             var registerContent = Utilities.GetRequestContent(registerCommand);
@@ -58,7 +63,7 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
 
             var command = new TokenRequest
             {
-                Username = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0]),
+                Username = userName,
                 Password = "1234"
             };
 
@@ -69,7 +74,7 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
 
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var response = await _client.GetAsync($"/api/users/{SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0])}");
+            var response = await _client.GetAsync($"/api/users/{userName}");
 
             response.EnsureSuccessStatusCode();
 
