@@ -64,7 +64,7 @@ namespace Flyinline.WebUI.Services
 
             // if (!_userManagementService.IsValidUser(request.Username, request.Password)) return false;
 
-            var expires = DateTime.Now.AddDays(_tokenManagement.RefreshExpirationDays);
+            var expires = DateTime.UtcNow.AddDays(_tokenManagement.RefreshExpirationDays);
 
             var claim = new[]
             {
@@ -96,7 +96,7 @@ namespace Flyinline.WebUI.Services
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenManagement.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(_tokenManagement.RefreshExpirationDays);
+            var expires = DateTime.UtcNow.AddDays(_tokenManagement.RefreshExpirationDays);
 
             var claims = new List<Claim>
             {
@@ -126,7 +126,11 @@ namespace Flyinline.WebUI.Services
 
             var roles = await GetPrincipalRolesByPrincipalIdAsync(userDetail.Id);
             var claimPermissions = await GetClaimPermissionsAsync(userDetail.Id);
-            var expires = DateTime.Now.AddMinutes(_tokenManagement.AccessExpiration);
+
+            var expires = DateTime.UtcNow.AddMinutes(_tokenManagement.AccessExpiration);
+            var expiresDateTime = DateTime.UtcNow.AddMinutes(_tokenManagement.AccessExpiration);
+            var expiresDateTimeOffset = new DateTimeOffset(expiresDateTime);
+            var expiresUnixDateTime = expiresDateTimeOffset.ToUnixTimeSeconds();
 
             var claims = new List<Claim>
             {
@@ -134,7 +138,7 @@ namespace Flyinline.WebUI.Services
                 new Claim("Nickname", userDetail.Nickname),
                 new Claim("Email", userDetail.Email),
                 new Claim("Created", DateTime.UtcNow.ToString()),
-                new Claim("Expires", expires.ToUniversalTime().ToLongDateString())
+                new Claim("Expires", expiresUnixDateTime.ToString())
             };
 
             claims.Add(new Claim("Claims", string.Join(',', claimPermissions))); 
