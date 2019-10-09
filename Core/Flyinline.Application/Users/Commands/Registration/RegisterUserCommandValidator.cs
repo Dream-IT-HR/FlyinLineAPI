@@ -11,8 +11,9 @@ namespace Flyinline.Application.Users.Commands.Registration
         {
             RuleFor(x => x.Username).NotEmpty();
             RuleFor(x => x.Email).EmailAddress().NotEmpty();
-            RuleFor(x => x.Nickname).NotEmpty();
-            RuleFor(x => x.FullName).NotEmpty();
+            RuleFor(x => x.FirstName).NotEmpty();
+            RuleFor(x => x.LastName).NotEmpty();
+            
         }
     }
 }

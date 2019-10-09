@@ -17,8 +17,8 @@ namespace Flyinline.Application.Users.Commands.Registration
     {
         public string Username { get; set; }
         public string Email { get; set; }
-        public string FullName { get; set; }
-        public string Nickname { get; set; }
+        public string FirstName { get; set; }
+        public string LastName{ get; set; }
         public bool IsBusinessOwner { get; set; }
     }
 

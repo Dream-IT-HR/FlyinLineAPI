@@ -13,8 +13,8 @@ namespace Flyinline.WebUI.Infrastructure.ExpressMapper
         public static void Initialize()
         {
             Mapper.Register<GoogleJsonWebSignature.Payload, RegisterUserCommand>()
-                .Member(dest => dest.FullName, src => src.Name)
-                .Member(dest => dest.Nickname, src => src.GivenName)
+                .Member(dest => dest.FirstName, src => src.GivenName)
+                .Member(dest => dest.LastName, src => src.FamilyName)
                 .Member(dest => dest.Username, src => src.Email)
                 .Member(dest => dest.Email, src => src.Email);
         }

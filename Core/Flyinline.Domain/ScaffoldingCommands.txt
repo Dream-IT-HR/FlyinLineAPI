@@ -1,4 +1,6 @@
-﻿Open package manager console, set default project to Flyinline.Domain, run the following commands:
+﻿***
+
+Open package manager console, set default project to Flyinline.Domain, run the following commands:
 
 ***
 

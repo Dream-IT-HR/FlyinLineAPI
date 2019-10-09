@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Flyinline.Persistance.Seeding
@@ -285,6 +286,16 @@ namespace Flyinline.Persistance.Seeding
         public static string GetEmailFromFullName(string fullname)
         {
             return fullname.ToLower().Replace(" ", ".") + "@gmail.com";
+        }
+
+        public static string GetFirstNameFromFullName(string fullname)
+        {
+            return fullname.Split(' ').ToList().FirstOrDefault();
+        }
+
+        public static string GetLastNameFromFullName(string fullname)
+        {
+            return fullname.Split(' ').ToList().LastOrDefault();
         }
     }
 }

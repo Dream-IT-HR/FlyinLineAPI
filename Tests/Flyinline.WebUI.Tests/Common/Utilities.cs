@@ -31,7 +31,6 @@ namespace Flyinline.WebUI.Tests.Common
             FlyinlineInitializer.Initialize(flyinlineContext);
         }
 
-
         [Fact]
         public void GivenCreateCustomerCommand_ReturnsSuccessStatusCode1()
         {

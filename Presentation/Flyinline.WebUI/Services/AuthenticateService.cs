@@ -135,7 +135,7 @@ namespace Flyinline.WebUI.Services
             var claims = new List<Claim>
             {
                 new Claim("Username", username),
-                new Claim("Nickname", userDetail.Nickname),
+                new Claim("FirstName", userDetail.FirstName),
                 new Claim("Email", userDetail.Email),
                 new Claim("Created", DateTime.UtcNow.ToString()),
                 new Claim("Expires", expiresUnixDateTime.ToString())

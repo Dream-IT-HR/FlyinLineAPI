@@ -47,7 +47,10 @@ namespace Flyinline.Persistance.Seeding
                 string email = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[nRes] + n.ToString());
 
                 context.UserDetail.Add(
-                    new UserDetail { Id = SeedHelpers.Guids[i], Fullname = SeedHelpers.Fullnames[nRes], Email = email, Username = email }
+                    new UserDetail { Id = SeedHelpers.Guids[i],
+                        FirstName = SeedHelpers.GetFirstNameFromFullName( SeedHelpers.Fullnames[nRes]),
+                        LastName = SeedHelpers.GetLastNameFromFullName(SeedHelpers.Fullnames[nRes]),
+                        Email = email, Username = email }
                 );
             }
         }

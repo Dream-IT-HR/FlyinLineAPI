@@ -22,9 +22,9 @@ namespace Flyinline.Application.Tests.Users.Commands.Registration
             var cmd = new RegisterUserCommand()
             {
                 Email = "pero.peric@perina.hr",
-                FullName = "Petar Peric",
+                FirstName = "Petar",
                 IsBusinessOwner = false,
-                Nickname = "Perica",
+                LastName= "Peric",
                 Username = "pero.peric@perina.hr"
             };
 

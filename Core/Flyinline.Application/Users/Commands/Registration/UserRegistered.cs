@@ -30,7 +30,7 @@ namespace Flyinline.Application.Users.Commands.Registration
                     Body =
 $@"New Registration {(notification.Data.IsBusinessOwner ? "Business Owner" : "Client")}
 Username: {notification.Data.Username}
-Fullname: {notification.Data.FullName}
+Fullname: {notification.Data.FirstName} {notification.Data.LastName}
 Email: {notification.Data.Email}
 {(notification.Data.IsBusinessOwner ? "Business Owner" : "Client")}
                     ",

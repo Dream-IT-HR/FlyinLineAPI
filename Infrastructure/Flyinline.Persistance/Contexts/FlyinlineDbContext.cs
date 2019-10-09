@@ -327,6 +327,10 @@ namespace Flyinline.Persistance.Contexts
             {
                 entity.ToTable("UserDetail", "Flyinline");
 
+                entity.HasIndex(e => e.Username)
+                    .HasName("PK_Flyinline_UserDetail_Username")
+                    .IsUnique();
+
                 entity.Property(e => e.Id)
                     .HasColumnName("ID")
                     .ValueGeneratedNever();
@@ -335,11 +339,11 @@ namespace Flyinline.Persistance.Contexts
                     .IsRequired()
                     .HasMaxLength(512);
 
-                entity.Property(e => e.Fullname)
+                entity.Property(e => e.FirstName)
                     .IsRequired()
                     .HasMaxLength(512);
 
-                entity.Property(e => e.Nickname)
+                entity.Property(e => e.LastName)
                     .IsRequired()
                     .HasMaxLength(512);
 

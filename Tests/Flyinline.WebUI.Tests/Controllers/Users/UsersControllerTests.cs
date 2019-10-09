@@ -27,9 +27,9 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
             var command = new RegisterUserCommand
             {
                 Email = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[2]),
-                FullName = SeedHelpers.Fullnames[2],
+                FirstName= SeedHelpers.GetFirstNameFromFullName(SeedHelpers.Fullnames[2]),
                 IsBusinessOwner = false,
-                Nickname = "Te",
+                LastName = SeedHelpers.GetLastNameFromFullName(SeedHelpers.Fullnames[2]),
                 Username = userName
             };
 
@@ -48,9 +48,9 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
             var registerCommand = new RegisterUserCommand
             {
                 Email = SeedHelpers.GetEmailFromFullName(SeedHelpers.Fullnames[0]),
-                FullName = SeedHelpers.Fullnames[0],
+                FirstName = SeedHelpers.GetFirstNameFromFullName(SeedHelpers.Fullnames[0]),
+                LastName = SeedHelpers.GetLastNameFromFullName(SeedHelpers.Fullnames[0]),
                 IsBusinessOwner = false,
-                Nickname = SeedHelpers.Fullnames[0].Split(' ')[0],
                 Username = userName
             };
 
@@ -72,6 +72,7 @@ namespace Flyinline.WebUI.Tests.Controllers.Users
             var tokenResponse = await _client.PostAsync($"/api/authentication/request", content);
             var token = await tokenResponse.Content.ReadAsStringAsync();
 
+            // TODO - fix token object
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await _client.GetAsync($"/api/users/{userName}");
