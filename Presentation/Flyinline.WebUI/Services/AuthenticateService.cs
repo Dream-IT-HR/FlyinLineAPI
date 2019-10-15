@@ -16,6 +16,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Northwind.Application.Exceptions;
 
 namespace Flyinline.WebUI.Services
 {
@@ -123,6 +124,11 @@ namespace Flyinline.WebUI.Services
             string token = string.Empty;
 
             Domain.Entities.UserDetail userDetail = await GetUserDetailByUsernameAsync(username);
+
+            if (userDetail == null)
+            {
+                throw new NotFoundException("UserDetail", username);
+            }
 
             var roles = await GetPrincipalRolesByPrincipalIdAsync(userDetail.Id);
             var claimPermissions = await GetClaimPermissionsAsync(userDetail.Id);

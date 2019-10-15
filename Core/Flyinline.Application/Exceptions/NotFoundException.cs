@@ -5,7 +5,7 @@ namespace Northwind.Application.Exceptions
     public class NotFoundException : Exception
     {
         public NotFoundException(string name, object key)
-            : base($"Entity \"{name}\" ({key}) was not found.")
+            : base($"Entity with the give key: {key} was not found in the repository \"{name}\"")
         {
         }
     }
