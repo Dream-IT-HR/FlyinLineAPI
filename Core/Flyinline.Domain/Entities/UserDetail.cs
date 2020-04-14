@@ -5,6 +5,11 @@ namespace Flyinline.Domain.Entities
 {
     public partial class UserDetail
     {
+        public UserDetail()
+        {
+            LineEmployee = new HashSet<LineEmployee>();
+        }
+
         public Guid Id { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
@@ -12,5 +17,6 @@ namespace Flyinline.Domain.Entities
         public string LastName { get; set; }
 
         public virtual Principal IdNavigation { get; set; }
+        public virtual ICollection<LineEmployee> LineEmployee { get; set; }
     }
 }
